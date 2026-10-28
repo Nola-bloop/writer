@@ -1,6 +1,8 @@
 let WRITER_ELEM = document.getElementById("writer")
 let MD_PREVIEW_ELEM = document.getElementById("md-preview")
 let START_TIME = undefined
+let HISTORY = []
+let HISTORY_CURSOR = 0
 
 setInterval(() => {
   let time = getTimeSince(START_TIME)
@@ -31,6 +33,16 @@ document.onkeydown = function (e) {
     case "Control": {key_states.control = true; break}
     case "Alt": {key_states.alt = true; break}
     case "Shift": { key_states.shift = true; break }
+    case "Space": {
+      //memorize words
+      break
+    }
+    case "z": {
+      if (key_states.control) {
+        //undo
+      }
+      break
+    }
     case "b": {
       if (key_states.control) {
         e.preventDefault()
@@ -81,8 +93,11 @@ document.onkeyup = function (e) {
     default: break
   }
 };
+
+
 WRITER_ELEM.addEventListener("input", () => {
   if (!START_TIME) START_TIME = Date.now()
+  if (WRITER_ELEM.value === "") START_TIME = undefined
   MD_PREVIEW_ELEM.innerHTML = discordMarkdownToHtml(WRITER_ELEM.value)
 })
 
