@@ -17,9 +17,82 @@ setInterval(() => {
   document.getElementById("stat-words").innerText=`${WRITER_ELEM.value.split(" ").filter(s=>s!=="").length} words`
 }, 50)
 
+let key_states = {
+  "control": false,
+  "shift": false,
+  "alt":false
+}
+
+document.onkeydown = function (e) {
+  let startPosition = WRITER_ELEM.selectionStart;
+  let endPosition = WRITER_ELEM.selectionEnd;
+  let text = WRITER_ELEM.value
+  switch (e.key) {
+    case "Control": {key_states.control = true; break}
+    case "Alt": {key_states.alt = true; break}
+    case "Shift": { key_states.shift = true; break }
+    case "b": {
+      if (key_states.control) {
+        e.preventDefault()
+        text = text.slice(0, startPosition) +
+          "**"+
+          text.slice(startPosition, endPosition) +
+          "**"+
+          text.slice(endPosition)
+        WRITER_ELEM.value = text
+        WRITER_ELEM.selectionStart = endPosition + 2
+        WRITER_ELEM.selectionEnd = endPosition + 2
+      } break
+    }
+    case "i": {
+      if (key_states.control) {
+        e.preventDefault()
+        text = text.slice(0, startPosition) +
+          "*"+
+          text.slice(startPosition, endPosition) +
+          "*"+
+          text.slice(endPosition)
+        WRITER_ELEM.value = text
+        WRITER_ELEM.selectionStart = endPosition + 1
+        WRITER_ELEM.selectionEnd = endPosition + 1
+      } break
+    }
+    case "s": {
+      if (key_states.control) {
+        e.preventDefault()
+        text = text.slice(0, startPosition) +
+          "~~"+
+          text.slice(startPosition, endPosition) +
+          "~~"+
+          text.slice(endPosition)
+        WRITER_ELEM.value = text
+        WRITER_ELEM.selectionStart = endPosition + 2
+        WRITER_ELEM.selectionEnd = endPosition + 2
+      } break
+    }
+    default: break
+  }
+};
+document.onkeyup = function (e) {
+  switch (e.key) {
+    case "Control": {key_states.control = false; break}
+    case "Alt": {key_states.alt = false; break}
+    case "Shift": { key_states.shift = false; break }
+    default: break
+  }
+};
 WRITER_ELEM.addEventListener("input", () => {
   if (!START_TIME) START_TIME = Date.now()
   MD_PREVIEW_ELEM.innerHTML = discordMarkdownToHtml(WRITER_ELEM.value)
+})
+
+document.getElementById("stat-time").addEventListener("click", () => {
+  if (document.getElementById("stat-time").classList.contains("hidden-text")) {
+    document.getElementById("stat-time").classList.remove("hidden-text")
+  }
+  else {
+    document.getElementById("stat-time").classList.add("hidden-text")
+  }
 })
 
 MD_PREVIEW_ELEM.innerHTML = discordMarkdownToHtml(WRITER_ELEM.value)

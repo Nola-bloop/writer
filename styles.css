@@ -41,8 +41,12 @@ body{
 }
 #stat-time{
   justify-self: end;
+  cursor: pointer;
 }
 
+.hidden-text{
+  color:transparent;
+}
 
 #writer-container{
   grid-row: 2;
