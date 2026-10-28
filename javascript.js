@@ -1,8 +1,7 @@
 let WRITER_ELEM = document.getElementById("writer")
 let MD_PREVIEW_ELEM = document.getElementById("md-preview")
 let START_TIME = undefined
-let HISTORY = []
-let HISTORY_CURSOR = 0
+let PAGE = document.getElementById("fg-window")
 
 setInterval(() => {
   let time = getTimeSince(START_TIME)
@@ -25,21 +24,30 @@ let key_states = {
   "alt":false
 }
 
+
 document.onkeydown = function (e) {
   let startPosition = WRITER_ELEM.selectionStart;
   let endPosition = WRITER_ELEM.selectionEnd;
   let text = WRITER_ELEM.value
+  console.log(e.key)
   switch (e.key) {
     case "Control": {key_states.control = true; break}
     case "Alt": {key_states.alt = true; break}
     case "Shift": { key_states.shift = true; break }
-    case "Space": {
-      //memorize words
-      break
-    }
-    case "z": {
-      if (key_states.control) {
-        //undo
+    case "1": {
+      if (key_states.control && key_states.alt) {
+        e.preventDefault()
+        console.log("H1 shortcut")
+        let brI = getClosestPriorLineBreak(startPosition)
+
+        if (text.slice(brI, brI+3) == "\n# "){ console.log("dupliqué!")} //fonctionne
+
+        text = text.slice(0, brI+1) +
+          "# "+
+          text.slice(brI+1)
+        WRITER_ELEM.value = text
+        WRITER_ELEM.selectionStart = endPosition+2
+        WRITER_ELEM.selectionEnd = endPosition+2
       }
       break
     }
@@ -171,6 +179,15 @@ function discordMarkdownToHtml(text) {
     return html;
 }
 
+function getClosestPriorLineBreak(index) {
+  for (let i = index; i >= 0; i--){
+    if (WRITER_ELEM.value.at(i) === "\n") {
+      return i
+    }
+  }
+  return 0
+}
+
 function getTimeSince(pastTimestamp) {
 
     // Get current time and find the difference in milliseconds
@@ -186,4 +203,20 @@ function getTimeSince(pastTimestamp) {
     const seconds = totalSeconds % 60;
 
     return { hours, minutes, seconds };
+}
+
+function ShowPage(pageName) {
+  PAGE.classList.remove("hidden")
+  document.getElementById("dark-bg").classList.remove("hidden")
+  let helper = document.getElementById("md-helper")
+
+  helper.classList.add("hidden")
+  if (pageName === "md-helper") {
+    helper.classList.remove("hidden")
+  }
+}
+
+function HidePage() {
+  PAGE.classList.add("hidden")
+  document.getElementById("dark-bg").classList.add("hidden")
 }

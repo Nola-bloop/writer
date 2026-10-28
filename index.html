@@ -6,21 +6,132 @@
 	<title>Writer</title>
 	<link rel="stylesheet" href="styles.css">
 	<script defer src="javascript.js"></script>
+
+	<link rel="icon" type="image/x-icon" href="https://i.pinimg.com/736x/3d/f3/47/3df34773e7a9192c29e7274d059dd2ec.jpg">
 </head>
 <body>
+  <div id="dark-bg" class="hidden" onclick="HidePage()"></div>
+  <div id="fg-window" class="hidden">
+    <div id="md-helper">
+      <!--AJOUTER LES DÉFINITIONS DE ROW-->
+      <h2>Markdown Cheatsheet</h2>
+      <div id="md-helper-grid">
+        <div class="col1 ">
+          <p class="discord-h1">Heading 1</p>
+          <p class="discord-subtext">CTRL+ALT+1</p>
+        </div>
+        <p class="col2"># TEXT</p>
+        <div class="separator colspan"></div>
+
+        <div class="col1">
+          <p class="discord-h2">Heading 2</p>
+          <p class="discord-subtext">CTRL+ALT+2</p>
+        </div>
+        <p class="col2">## TEXT</p>
+        <div class="separator colspan"></div>
+
+        <div class="col1">
+          <p class="discord-h3">Heading 3</p>
+          <p class="discord-subtext">CTRL+ALT+3</p>
+        </div>
+        <p class="col2">### TEXT</p>
+        <div class="separator colspan"></div>
+
+        <div class="col1">
+          <p class="discord-subtext">Subtext</p>
+          <p class="discord-subtext">CTRL+D</p>
+        </div>
+        <p class="col2">-# TEXT</p>
+        <div class="separator colspan"></div>
+
+        <div class="col1">
+          <p class="discord-bold">Bold</p>
+          <p class="discord-subtext">CTRL+B</p>
+        </div>
+        <p class="col2">**TEXT**</p>
+        <div class="separator colspan"></div>
+
+        <div class="col1">
+          <p class="discord-italic">Italic</p>
+          <p class="discord-subtext">CTRL+I</p>
+        </div>
+        <p class="col2">*TEXT*</p>
+        <div class="separator colspan"></div>
+
+        <div class="col1">
+          <p class="discord-underline">Underline</p>
+          <p class="discord-subtext">CTRL+U</p>
+        </div>
+        <p class="col2">__TEXT__</p>
+        <div class="separator colspan"></div>
+
+        <div class="col1">
+          <p class="discord-strikethrough">Strikethrough</p>
+          <p class="discord-subtext">CTRL+S</p>
+        </div>
+        <p class="col2">~~TEXT~~</p>
+        <div class="separator colspan"></div>
+
+        <div class="col1">
+          <p class="discord-bloc-quote">Quote</p>
+          <p class="discord-subtext">CTRL+Q</p>
+        </div>
+        <p class="col2">&lt; TEXT</p>
+        <div class="separator colspan"></div>
+
+        <div class="col1">
+          <p class="discord-bloc-quote">Multiline quote</p>
+          <p class="discord-subtext">CTRL+SHIFT+Q</p>
+        </div>
+        <p class="col2">&lt;&lt;&lt; TEXT</p>
+        <div class="separator colspan"></div>
+
+        <div class="col1">
+          <p class="discord-spoiler">Spoiler</p>
+          <p class="discord-subtext">CTRL+L</p>
+        </div>
+        <p class="col2">||TEXT||</p>
+        <div class="separator colspan"></div>
+
+        <div class="col1">
+          <p class="discord-inline-code">Inline code</p>
+          <p class="discord-subtext">CTRL+R</p>
+        </div>
+        <p class="col2">`TEXT`</p>
+        <div class="separator colspan"></div>
+
+        <div class="col1">
+          <p class="discord-code-block">Code block</p>
+          <p class="discord-subtext">CTRL+SHIFT+R</p>
+        </div>
+        <p class="col2">```TEXT```</p>
+      </div>
+    </div>
+  </div>
+
+
   <div id="top-bar">
     <div id="statistics">
       <p id="stat-words">0 words</p>
       <p id="stat-chars">0 characters</p>
       <p id="stat-time"></p>
     </div>
+    <div id="buttons">
+      <p id="button-md" onclick="ShowPage('md-helper')" class="button nf nf-fa-hashtag"></p>
+    </div>
   </div>
+
+
+
 	<div id="writer-container">
 	  <textarea id="writer" class="writer-text" onchange=""></textarea>
 		<div id="md-preview">
 
 		</div>
 	</div>
+
+
+
 	<div id="bottom-bar">
 
 	</div>
