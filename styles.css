@@ -180,6 +180,7 @@ a:active {
     padding: 2px 4px;
     border-radius: 4px;
 }
+
 /* Headings */
 .discord-heading {
     display: block;
@@ -197,7 +198,6 @@ a:active {
 
 /* Blockquotes */
 .discord-block-quote {
-    display: block;
     border-left: 4px solid #4f545c;
     padding-left: 8px;
     margin: 4px 0;

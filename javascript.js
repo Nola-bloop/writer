@@ -15,7 +15,7 @@ setInterval(() => {
 
 
   document.getElementById("stat-chars").innerText = `${WRITER_ELEM.value.length} characters`
-  document.getElementById("stat-words").innerText=`${WRITER_ELEM.value.split(" ").filter(s=>s!=="").length} words`
+  document.getElementById("stat-words").innerText = `${WRITER_ELEM.value.split(" ").filter(s => s !== "").length} words`
 }, 50)
 
 let key_states = {
@@ -37,17 +37,150 @@ document.onkeydown = function (e) {
     case "1": {
       if (key_states.control && key_states.alt) {
         e.preventDefault()
-        console.log("H1 shortcut")
         let brI = getClosestPriorLineBreak(startPosition)
 
-        if (text.slice(brI, brI+3) == "\n# "){ console.log("dupliqué!")} //fonctionne
+        if (text.slice(brI, brI + 3) === "\n# ") {
+          text = text.slice(0, brI+1) +
+            text.slice(brI+3)
+          WRITER_ELEM.value = text
+          WRITER_ELEM.selectionStart = endPosition-2
+          WRITER_ELEM.selectionEnd = endPosition - 2
+          refreshMarkdown()
+        } else {
+          text = text.slice(0, brI+1) +
+            "# "+
+            text.slice(brI+1)
+          WRITER_ELEM.value = text
+          WRITER_ELEM.selectionStart = endPosition+2
+          WRITER_ELEM.selectionEnd = endPosition + 2
+          refreshMarkdown()
+        }
 
-        text = text.slice(0, brI+1) +
-          "# "+
-          text.slice(brI+1)
-        WRITER_ELEM.value = text
-        WRITER_ELEM.selectionStart = endPosition+2
-        WRITER_ELEM.selectionEnd = endPosition+2
+      }
+      break
+    }
+    case "2": {
+      if (key_states.control && key_states.alt) {
+        e.preventDefault()
+        let brI = getClosestPriorLineBreak(startPosition)
+
+        if (text.slice(brI, brI + 4) === "\n## ") {
+          text = text.slice(0, brI+1) +
+            text.slice(brI+4)
+          WRITER_ELEM.value = text
+          WRITER_ELEM.selectionStart = endPosition-3
+          WRITER_ELEM.selectionEnd = endPosition - 3
+          refreshMarkdown()
+        } else {
+          text = text.slice(0, brI+1) +
+            "## "+
+            text.slice(brI+1)
+          WRITER_ELEM.value = text
+          WRITER_ELEM.selectionStart = endPosition+3
+          WRITER_ELEM.selectionEnd = endPosition + 3
+          refreshMarkdown()
+        }
+
+      }
+      break
+    }
+    case "3": {
+      if (key_states.control && key_states.alt) {
+        e.preventDefault()
+        let brI = getClosestPriorLineBreak(startPosition)
+
+        if (text.slice(brI, brI + 5) === "\n### ") {
+          text = text.slice(0, brI+1) +
+            text.slice(brI+5)
+          WRITER_ELEM.value = text
+          WRITER_ELEM.selectionStart = endPosition-4
+          WRITER_ELEM.selectionEnd = endPosition - 4
+          refreshMarkdown()
+        } else {
+          text = text.slice(0, brI+1) +
+            "### "+
+            text.slice(brI+1)
+          WRITER_ELEM.value = text
+          WRITER_ELEM.selectionStart = endPosition+4
+          WRITER_ELEM.selectionEnd = endPosition + 4
+          refreshMarkdown()
+        }
+
+      }
+      break
+    }
+    case "d": {
+      if (key_states.control) {
+        e.preventDefault()
+        let brI = getClosestPriorLineBreak(startPosition)
+
+        if (text.slice(brI, brI + 4) === "\n-# ") {
+          text = text.slice(0, brI+1) +
+            text.slice(brI+4)
+          WRITER_ELEM.value = text
+          WRITER_ELEM.selectionStart = endPosition-3
+          WRITER_ELEM.selectionEnd = endPosition - 3
+          refreshMarkdown()
+        } else {
+          text = text.slice(0, brI+1) +
+            "-# "+
+            text.slice(brI+1)
+          WRITER_ELEM.value = text
+          WRITER_ELEM.selectionStart = endPosition+3
+          WRITER_ELEM.selectionEnd = endPosition + 3
+          refreshMarkdown()
+        }
+
+      }
+      break
+    }
+    case "e": {
+      if (key_states.control) {
+        e.preventDefault()
+        let brI = getClosestPriorLineBreak(startPosition)
+
+        if (text.slice(brI, brI + 3) === "\n> ") {
+          text = text.slice(0, brI+1) +
+            text.slice(brI+3)
+          WRITER_ELEM.value = text
+          WRITER_ELEM.selectionStart = endPosition-2
+          WRITER_ELEM.selectionEnd = endPosition - 2
+          refreshMarkdown()
+        } else {
+          text = text.slice(0, brI+1) +
+            "> "+
+            text.slice(brI+1)
+          WRITER_ELEM.value = text
+          WRITER_ELEM.selectionStart = endPosition+2
+          WRITER_ELEM.selectionEnd = endPosition + 2
+          refreshMarkdown()
+        }
+
+      }
+      break
+    }
+    case "E": {
+      if (key_states.control && key_states.shift) {
+        e.preventDefault()
+        let brI = getClosestPriorLineBreak(startPosition)
+
+        if (text.slice(brI, brI + 5) === "\n>>> ") {
+          text = text.slice(0, brI+1) +
+            text.slice(brI+5)
+          WRITER_ELEM.value = text
+          WRITER_ELEM.selectionStart = endPosition-4
+          WRITER_ELEM.selectionEnd = endPosition - 4
+          refreshMarkdown()
+        } else {
+          text = text.slice(0, brI+1) +
+            ">>> "+
+            text.slice(brI+1)
+          WRITER_ELEM.value = text
+          WRITER_ELEM.selectionStart = endPosition+4
+          WRITER_ELEM.selectionEnd = endPosition + 4
+          refreshMarkdown()
+        }
+
       }
       break
     }
@@ -62,6 +195,7 @@ document.onkeydown = function (e) {
         WRITER_ELEM.value = text
         WRITER_ELEM.selectionStart = endPosition + 2
         WRITER_ELEM.selectionEnd = endPosition + 2
+        refreshMarkdown()
       } break
     }
     case "i": {
@@ -75,6 +209,7 @@ document.onkeydown = function (e) {
         WRITER_ELEM.value = text
         WRITER_ELEM.selectionStart = endPosition + 1
         WRITER_ELEM.selectionEnd = endPosition + 1
+        refreshMarkdown()
       } break
     }
     case "s": {
@@ -88,6 +223,63 @@ document.onkeydown = function (e) {
         WRITER_ELEM.value = text
         WRITER_ELEM.selectionStart = endPosition + 2
         WRITER_ELEM.selectionEnd = endPosition + 2
+        refreshMarkdown()
+      } break
+    }
+    case "u": {
+      if (key_states.control) {
+        e.preventDefault()
+        text = text.slice(0, startPosition) +
+          "__"+
+          text.slice(startPosition, endPosition) +
+          "__"+
+          text.slice(endPosition)
+        WRITER_ELEM.value = text
+        WRITER_ELEM.selectionStart = endPosition + 2
+        WRITER_ELEM.selectionEnd = endPosition + 2
+        refreshMarkdown()
+      } break
+    }
+    case "l": {
+      if (key_states.control) {
+        e.preventDefault()
+        text = text.slice(0, startPosition) +
+          "||"+
+          text.slice(startPosition, endPosition) +
+          "||"+
+          text.slice(endPosition)
+        WRITER_ELEM.value = text
+        WRITER_ELEM.selectionStart = endPosition + 2
+        WRITER_ELEM.selectionEnd = endPosition + 2
+        refreshMarkdown()
+      } break
+    }
+    case "r": {
+      if (key_states.control) {
+        e.preventDefault()
+        text = text.slice(0, startPosition) +
+          "`"+
+          text.slice(startPosition, endPosition) +
+          "`"+
+          text.slice(endPosition)
+        WRITER_ELEM.value = text
+        WRITER_ELEM.selectionStart = endPosition + 1
+        WRITER_ELEM.selectionEnd = endPosition + 1
+        refreshMarkdown()
+      } break
+    }
+    case "R": {
+      if (key_states.control && key_states.shift) {
+        e.preventDefault()
+        text = text.slice(0, startPosition) +
+          "```"+
+          text.slice(startPosition, endPosition) +
+          "```"+
+          text.slice(endPosition)
+        WRITER_ELEM.value = text
+        WRITER_ELEM.selectionStart = endPosition + 3
+        WRITER_ELEM.selectionEnd = endPosition + 3
+        refreshMarkdown()
       } break
     }
     default: break
@@ -102,11 +294,24 @@ document.onkeyup = function (e) {
   }
 };
 
+function refreshMarkdown() {
+  MD_PREVIEW_ELEM.innerHTML = discordMarkdownToHtml(WRITER_ELEM.value)
+}
 
 WRITER_ELEM.addEventListener("input", () => {
   if (!START_TIME) START_TIME = Date.now()
   if (WRITER_ELEM.value === "") START_TIME = undefined
-  MD_PREVIEW_ELEM.innerHTML = discordMarkdownToHtml(WRITER_ELEM.value)
+  refreshMarkdown()
+})
+
+WRITER_ELEM.addEventListener("scroll", () => {
+  let scrollPercent = WRITER_ELEM.scrollTop / WRITER_ELEM.scrollHeight
+  MD_PREVIEW_ELEM.scrollTop = MD_PREVIEW_ELEM.scrollHeight * scrollPercent
+})
+
+MD_PREVIEW_ELEM.addEventListener("scroll", () => {
+  let scrollPercent = MD_PREVIEW_ELEM.scrollTop / MD_PREVIEW_ELEM.scrollHeight
+  WRITER_ELEM.scrollTop = WRITER_ELEM.scrollHeight * scrollPercent
 })
 
 document.getElementById("stat-time").addEventListener("click", () => {
@@ -156,7 +361,7 @@ function discordMarkdownToHtml(text) {
     html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="discord-link">$1</a>');
 
     // 8. Spoilers: ||text||
-    html = html.replace(/\|\|(.+?)\|\|/g, '<span class="discord-spoiler"><span>$1</span></span>');
+    html = html.replace(/\|\|(.+?)\|\|/g, '<span class="discord-spoiler">$1</span>');
 
     // 9. Bold + Italic: ***text*** or ___text___
     html = html.replace(/(\*\*\*|___)(?=\S)(.+?)(?<=\S)\1/g, '<span class="discord-bold discord-italic">$2</span>');
