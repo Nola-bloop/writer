@@ -137,6 +137,8 @@ body{
   padding: 0.5rem 1rem;
   font-size: 1rem;
   overflow-y: scroll;
+  overflow-x:hidden;
+  overflow-wrap: break-word;
 }
 #bottom-bar{
   grid-row: 3;

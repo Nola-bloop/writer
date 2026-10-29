@@ -18,6 +18,12 @@ setInterval(() => {
   document.getElementById("stat-words").innerText = `${WRITER_ELEM.value.split(" ").filter(s => s !== "").length} words`
 }, 50)
 
+setInterval(() => {
+  localStorage.setItem("cached_text", WRITER_ELEM.value)
+  console.log("Autosave completed! (saved in local storage)")
+}, 1000 * 10)
+WRITER_ELEM.value= localStorage.getItem("cached_text") ?? ""
+
 let key_states = {
   "control": false,
   "shift": false,
@@ -29,7 +35,6 @@ document.onkeydown = function (e) {
   let startPosition = WRITER_ELEM.selectionStart;
   let endPosition = WRITER_ELEM.selectionEnd;
   let text = WRITER_ELEM.value
-  console.log(e.key)
   switch (e.key) {
     case "Control": {key_states.control = true; break}
     case "Alt": {key_states.alt = true; break}
