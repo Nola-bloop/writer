@@ -2,6 +2,7 @@ let WRITER_ELEM = document.getElementById("writer")
 let MD_PREVIEW_ELEM = document.getElementById("md-preview")
 let START_TIME = undefined
 let PAGE = document.getElementById("fg-window")
+let TUPPERS = []
 
 setInterval(() => {
   let time = getTimeSince(START_TIME)
@@ -22,7 +23,7 @@ setInterval(() => {
   localStorage.setItem("cached_text", WRITER_ELEM.value)
   console.log("Autosave completed! (saved in local storage)")
 }, 1000 * 10)
-WRITER_ELEM.value= localStorage.getItem("cached_text") ?? ""
+
 
 let key_states = {
   "control": false,
@@ -331,62 +332,81 @@ document.getElementById("stat-time").addEventListener("click", () => {
 MD_PREVIEW_ELEM.innerHTML = discordMarkdownToHtml(WRITER_ELEM.value)
 
 function discordMarkdownToHtml(text) {
-    if (!text) return '';
+  if (!text) return '';
 
-    // Escape HTML entities to prevent XSS attacks
-    let html = text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
+  // Escape HTML entities to prevent XSS attacks
+  let html = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
 
-    // 1. Multiline Blockquote: >>> text (must be processed before single-line)
-    html = html.replace(/^&gt;&gt;&gt; ([\s\S]*)$/gm, '<span class="discord-block-quote discord-multi-quote">$1</span>');
+// 1. Multiline Blockquote: >>> text (must be processed before single-line)
+  html = html.replace(/^&gt;&gt;&gt; ([\s\S]*)$/gm, '<span class="discord-block-quote discord-multi-quote">$1</span>');
 
-    // 2. Single-line Blockquote: > text (at the start of a line)
-    html = html.replace(/^&gt; (.*$)/gm, '<span class="discord-block-quote">$1</span>');
+  // 2. Single-line Blockquote: > text (at the start of a line)
+  html = html.replace(/^&gt; (.*$)/gm, '<span class="discord-block-quote">$1</span>');
 
-    // 3. Headings: #, ##, ### (at the start of a line)
-    html = html.replace(/^### (.*$)/gm, '<span class="discord-heading discord-h3">$1</span>');
-    html = html.replace(/^## (.*$)/gm, '<span class="discord-heading discord-h2">$1</span>');
-    html = html.replace(/^# (.*$)/gm, '<span class="discord-heading discord-h1">$1</span>');
+  // 3. Headings: #, ##, ### (at the start of a line)
+  html = html.replace(/^### (.*$)/gm, '<span class="discord-heading discord-h3">$1</span>');
+  html = html.replace(/^## (.*$)/gm, '<span class="discord-heading discord-h2">$1</span>');
+  html = html.replace(/^# (.*$)/gm, '<span class="discord-heading discord-h1">$1</span>');
 
-    // 4. Subtext / Small text: -# text (at the start of a line)
-    html = html.replace(/^-\# (.*$)/gm, '<span class="discord-subtext">$1</span>');
+  // 4. Subtext / Small text: -# text (at the start of a line)
+  html = html.replace(/^-\# (.*$)/gm, '<span class="discord-subtext">$1</span>');
 
-    // 5. Code blocks (multiline): ```lang\ncode``` or ```code```
-    html = html.replace(/```(?:([a-zA-Z0-9_-]+)\n)?([\s\S]*?)```/g, (match, lang, code) => {
-        const langClass = lang ? ` class="discord-code-block lang-${lang}"` : ' class="discord-code-block"';
-        return `<pre><code${langClass}>${code.trim()}</code></pre>`;
-    });
+  // 5. Code blocks (multiline): ```lang\ncode``` or ```code```
+  html = html.replace(/```(?:([a-zA-Z0-9_-]+)\n)?([\s\S]*?)```/g, (match, lang, code) => {
+      const langClass = lang ? ` class="discord-code-block lang-${lang}"` : ' class="discord-code-block"';
+      return `<pre><code${langClass}>${code.trim()}</code></pre>`;
+  });
 
-    // 6. Inline code: `code`
-    html = html.replace(/`([^`]+)`/g, '<span class="discord-inline-code">$1</span>');
+  // 6. Inline code: `code`
+  html = html.replace(/`([^`]+)`/g, '<span class="discord-inline-code">$1</span>');
 
-    // 7. URLs: [text](url)
-    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="discord-link">$1</a>');
+  // 7. URLs: [text](url)
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="discord-link">$1</a>');
 
-    // 8. Spoilers: ||text||
-    html = html.replace(/\|\|(.+?)\|\|/g, '<span class="discord-spoiler">$1</span>');
+  // 8. Spoilers: ||text||
+  html = html.replace(/\|\|(.+?)\|\|/g, '<span class="discord-spoiler">$1</span>');
 
-    // 9. Bold + Italic: ***text*** or ___text___
-    html = html.replace(/(\*\*\*|___)(?=\S)(.+?)(?<=\S)\1/g, '<span class="discord-bold discord-italic">$2</span>');
+  // 9. Bold + Italic: ***text*** or ___text___
+  html = html.replace(/(\*\*\*|___)(?=\S)(.+?)(?<=\S)\1/g, '<span class="discord-bold discord-italic">$2</span>');
 
-    // 10. Bold: **text**
-    html = html.replace(/\*\*(?=\S)(.+?)(?<=\S)\*\*/g, '<span class="discord-bold">$1</span>');
+  // 10. Bold: **text**
+  html = html.replace(/\*\*(?=\S)(.+?)(?<=\S)\*\*/g, '<span class="discord-bold">$1</span>');
 
-    // 11. Underline: __text__
-    html = html.replace(/__(?=\S)(.+?)(?<=\S)__/g, '<span class="discord-underline">$1</span>');
+  // 11. Underline: __text__
+  html = html.replace(/__(?=\S)(.+?)(?<=\S)__/g, '<span class="discord-underline">$1</span>');
 
-    // 12. Italic: *text* or _text_
-    html = html.replace(/(?<!\w)(\*|_)(?=\S)(.+?)(?<=\S)\1(?!\w)/g, '<span class="discord-italic">$2</span>');
+  // 12. Italic: *text* or _text_
+  html = html.replace(/(?<!\w)(\*|_)(?=\S)(.+?)(?<=\S)\1(?!\w)/g, '<span class="discord-italic">$2</span>');
 
-    // 13. Strikethrough: ~~text~~
-    html = html.replace(/~~(?=\S)(.+?)(?<=\S)~~/g, '<span class="discord-strikethrough">$1</span>');
+  // 13. Strikethrough: ~~text~~
+  html = html.replace(/~~(?=\S)(.+?)(?<=\S)~~/g, '<span class="discord-strikethrough">$1</span>');
 
-    // Convert newlines to <br> tags for proper display
-    html = html.replace(/\r?\n/g, '<br>');
+  // Convert newlines to <br> tags for proper display
+  html = html.replace(/\r?\n/g, '<br>');
 
-    return html;
+
+  //GROUP TUPPERS
+  let separators = []
+  let separatedHTML = ""
+  let flag = false
+  for (let i = 0; i < html.length; i++){
+    TUPPERS.forEach((t, ti) => {
+      if (html.slice(i, i + t.prefix.length) === t.prefix)
+      {
+        if (flag) separatedHTML += "</div>"
+        separatedHTML += `<p class="tupper-name">${t.name}</p><div class="tupper-text" id="tupper-text-${ti}" onclick="CopyTupperText(${ti})">`
+        flag = true
+        i+=t.prefix.length
+      }
+    })
+    separatedHTML += html[i]
+  }
+  if (flag) separatedHTML+="</div>"
+
+  return separatedHTML;
 }
 
 function getClosestPriorLineBreak(index) {
@@ -419,10 +439,16 @@ function ShowPage(pageName) {
   PAGE.classList.remove("hidden")
   document.getElementById("dark-bg").classList.remove("hidden")
   let helper = document.getElementById("md-helper")
+  let tuppers = document.getElementById("tupper-list")
 
   helper.classList.add("hidden")
   if (pageName === "md-helper") {
     helper.classList.remove("hidden")
+  }
+
+  tuppers.classList.add("hidden")
+  if (pageName === "tupper-list") {
+    tuppers.classList.remove("hidden")
   }
 }
 
@@ -430,3 +456,76 @@ function HidePage() {
   PAGE.classList.add("hidden")
   document.getElementById("dark-bg").classList.add("hidden")
 }
+
+function AddTupper() {
+  TUPPERS.push({
+    prefix: "",
+    name: ""
+  })
+  PopulateTuppers()
+}
+
+function PopulateTuppers() {
+  let container = document.getElementById("tupper-list-container")
+  container.innerHTML = ""
+  TUPPERS.forEach((t, i) => {
+    container.innerHTML+= `
+      <div class="tupper">
+        <input oninput="SetTupperPrefix(${i})" id="i-tupper-prefix-${i}" class="i-tupper-prefix" type=text value="${t.prefix}"></input>
+        <input oninput="SetTupperName(${i})" id="i-tupper-name-${i}" class="i-tupper-name" type=text value="${t.name}"></input>
+        <p onclick="RemoveTupper(${i})" class="i-tupper-delete nf nf-fa-minus button"></p>
+      </div>
+    `
+  })
+  SaveTuppers()
+}
+function RemoveTupper(i) {
+  TUPPERS.splice(i, 1)
+  PopulateTuppers()
+}
+
+function SetTupperPrefix(i) {
+  TUPPERS[i].prefix = document.getElementById("i-tupper-prefix-" + i).value
+  SaveTuppers()
+}
+function SetTupperName(i) {
+  TUPPERS[i].name = document.getElementById("i-tupper-name-" + i).value
+  SaveTuppers()
+}
+
+function SaveTuppers() {
+  let savedString = ""
+  let separator1 = "_`_"
+  let separator2 = "+`+"
+  TUPPERS.forEach((t, i) => {
+    savedString += `${t.prefix}${separator1}${t.name}`
+
+    if (i !== TUPPERS.length-1) savedString += separator2
+  })
+  localStorage.setItem("tupper_config", savedString)
+}
+
+function CopyTupperText(i) {
+  let text = document.getElementById("tupper-text-" + i).innerHTML
+  text = text.replaceAll("<br>", "\n")
+  text = text.replaceAll(/<[^<>]*>/gi, "")
+  navigator.clipboard.writeText(TUPPERS[i].prefix+" "+text);
+}
+
+//load saved text
+WRITER_ELEM.value = localStorage.getItem("cached_text") ?? ""
+
+//load tuppers
+let tupper_config = localStorage.getItem("tupper_config")
+if (tupper_config) {
+  let tupper_config_tuppers = tupper_config.split("+`+")
+  tupper_config_tuppers.forEach(t => {
+    let attributes = t.split("_`_")
+    TUPPERS.push({
+      prefix: attributes[0],
+      name: attributes[1]
+    })
+  })
+  PopulateTuppers()
+}
+refreshMarkdown()

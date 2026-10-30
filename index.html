@@ -12,7 +12,7 @@
 <body>
   <div id="dark-bg" class="hidden" onclick="HidePage()"></div>
   <div id="fg-window" class="hidden">
-    <div id="md-helper">
+    <div id="md-helper" class="fg-window">
       <!--AJOUTER LES DÉFINITIONS DE ROW-->
       <h2>Markdown Cheatsheet</h2>
       <div id="md-helper-grid">
@@ -107,6 +107,17 @@
         <p class="col2">```TEXT```</p>
       </div>
     </div>
+    <div id="tupper-list" class="fg-window hidden">
+      <h2>List of parsed tuppers.</h2>
+      <p class="discord-subtext">This makes the writer automatically recognize these tuppers to group their text together!</p>
+      <div class="tupper">
+        <p class="i-tupper-prefix">Prefix</p>
+        <p class="i-tupper-name">Name</p>
+      </div>
+      <div id="tupper-list-container">
+      </div>
+      <p onclick="AddTupper()" class="button nf nf-oct-plus"></p>
+    </div>
   </div>
 
 
@@ -117,7 +128,8 @@
       <p id="stat-time"></p>
     </div>
     <div id="buttons">
-      <p id="button-md" onclick="ShowPage('md-helper')" class="button nf nf-fa-hashtag"></p>
+      <p onclick="ShowPage('md-helper')" class="button nf nf-fa-hashtag"></p>
+      <p onclick="ShowPage('tupper-list')" class="button nf nf-fa-toolbox"></p>
     </div>
   </div>
 
