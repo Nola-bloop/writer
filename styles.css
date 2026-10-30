@@ -158,6 +158,12 @@ input{
   display: grid;
   grid-template-columns: 2rem 1fr 2rem 1fr 2rem;
   height: 90vh;
+  transition: grid-template-columns;
+  transition-duration: 500ms;
+  overflow-x: hidden;
+}
+#writer-container.HOG{
+  grid-template-columns: 2rem auto 2rem 0px 0px;
 }
 #writer{
   grid-column: 2;

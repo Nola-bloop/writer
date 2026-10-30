@@ -340,24 +340,45 @@ function discordMarkdownToHtml(text) {
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
 
-// 1. Multiline Blockquote: >>> text (must be processed before single-line)
-  html = html.replace(/^&gt;&gt;&gt; ([\s\S]*)$/gm, '<span class="discord-block-quote discord-multi-quote">$1</span>');
+  //GROUP TUPPERS
+  let separatedHTML = ""
+  let flag = false
+  for (let i = 0; i < html.length; i++){
+    TUPPERS.forEach((t, ti) => {
+      if (html.slice(i, i + t.prefix.length) === t.prefix)
+      {
+        if (flag) separatedHTML += "</div>"
+        separatedHTML += `<p class="tupper-name">${t.name}</p><div class="tupper-text" id="tupper-text-${ti}" onclick="CopyTupperText(${ti})">\n`
+        flag = true
+        i+=t.prefix.length
+      }
+    })
+    separatedHTML += html[i]
+  }
+  if (flag) separatedHTML += "</div>"
+  html = separatedHTML.trim()
+
+  html = html.replace(/\r?\n[\s]*/g, "\n")
+  console.log(html)
+
+  // 1. Multiline Blockquote: >>> text (must be processed before single-line)
+  html = html.replace(/\r?\n&gt;&gt;&gt; ([\s\S]*)$/g, '<div class="discord-block-quote discord-multi-quote">$1</div>');
 
   // 2. Single-line Blockquote: > text (at the start of a line)
-  html = html.replace(/^&gt; (.*$)/gm, '<span class="discord-block-quote">$1</span>');
+  html = html.replace(/\r?\n&gt; ([^\r\n]*)/g, '<span class="discord-block-quote">$1</span>');
 
   // 3. Headings: #, ##, ### (at the start of a line)
-  html = html.replace(/^### (.*$)/gm, '<span class="discord-heading discord-h3">$1</span>');
-  html = html.replace(/^## (.*$)/gm, '<span class="discord-heading discord-h2">$1</span>');
-  html = html.replace(/^# (.*$)/gm, '<span class="discord-heading discord-h1">$1</span>');
+  html = html.replace(/(?:^|\r?\n)### ([^\r\n]*)/g, '<span class="discord-heading discord-h3">$1</span>');
+  html = html.replace(/(?:^|\r?\n)## ([^\r\n]*)/g, '<span class="discord-heading discord-h2">$1</span>');
+  html = html.replace(/(?:^|\r?\n)# ([^\r\n]*)/g, '<span class="discord-heading discord-h1">$1</span>');
 
   // 4. Subtext / Small text: -# text (at the start of a line)
-  html = html.replace(/^-\# (.*$)/gm, '<span class="discord-subtext">$1</span>');
+  html = html.replace(/\r?\n-\# (.*$)/g, '<span class="discord-subtext">$1</span>');
 
   // 5. Code blocks (multiline): ```lang\ncode``` or ```code```
   html = html.replace(/```(?:([a-zA-Z0-9_-]+)\n)?([\s\S]*?)```/g, (match, lang, code) => {
       const langClass = lang ? ` class="discord-code-block lang-${lang}"` : ' class="discord-code-block"';
-      return `<pre><code${langClass}>${code.trim()}</code></pre>`;
+      return `<div${langClass}>${code.trim()}</div>`;
   });
 
   // 6. Inline code: `code`
@@ -384,29 +405,14 @@ function discordMarkdownToHtml(text) {
   // 13. Strikethrough: ~~text~~
   html = html.replace(/~~(?=\S)(.+?)(?<=\S)~~/g, '<span class="discord-strikethrough">$1</span>');
 
+  //remove unnecessary characters
+  html = html.trim()
+  html = html.replace(/<div (?=[^<>])*>\r?\n/g, '<div $1>');
+
   // Convert newlines to <br> tags for proper display
   html = html.replace(/\r?\n/g, '<br>');
 
-
-  //GROUP TUPPERS
-  let separators = []
-  let separatedHTML = ""
-  let flag = false
-  for (let i = 0; i < html.length; i++){
-    TUPPERS.forEach((t, ti) => {
-      if (html.slice(i, i + t.prefix.length) === t.prefix)
-      {
-        if (flag) separatedHTML += "</div>"
-        separatedHTML += `<p class="tupper-name">${t.name}</p><div class="tupper-text" id="tupper-text-${ti}" onclick="CopyTupperText(${ti})">`
-        flag = true
-        i+=t.prefix.length
-      }
-    })
-    separatedHTML += html[i]
-  }
-  if (flag) separatedHTML+="</div>"
-
-  return separatedHTML;
+  return html;
 }
 
 function getClosestPriorLineBreak(index) {
