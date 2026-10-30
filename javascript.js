@@ -358,7 +358,7 @@ function discordMarkdownToHtml(text) {
   if (flag) separatedHTML += "</div>"
   html = separatedHTML.trim()
 
-  html = html.replace(/\r?\n[\s]*/g, "\n")
+  html = html.replace(/\r?\n[ ]*/g, "\n")
   console.log(html)
 
   // 1. Multiline Blockquote: >>> text (must be processed before single-line)
@@ -373,7 +373,7 @@ function discordMarkdownToHtml(text) {
   html = html.replace(/(?:^|\r?\n)# ([^\r\n]*)/g, '<span class="discord-heading discord-h1">$1</span>');
 
   // 4. Subtext / Small text: -# text (at the start of a line)
-  html = html.replace(/\r?\n-\# (.*$)/g, '<span class="discord-subtext">$1</span>');
+  html = html.replace(/(?:^|\r?\n)-# ([^\r\n]*)/g, '<br><span class="discord-subtext">$1</span>');
 
   // 5. Code blocks (multiline): ```lang\ncode``` or ```code```
   html = html.replace(/```(?:([a-zA-Z0-9_-]+)\n)?([\s\S]*?)```/g, (match, lang, code) => {
@@ -406,8 +406,8 @@ function discordMarkdownToHtml(text) {
   html = html.replace(/~~(?=\S)(.+?)(?<=\S)~~/g, '<span class="discord-strikethrough">$1</span>');
 
   //remove unnecessary characters
-  html = html.trim()
-  html = html.replace(/<div (?=[^<>])*>\r?\n/g, '<div $1>');
+  // html = html.trim()
+  // html = html.replace(/<div (?:[^<>])*>\r?\n/g, '<div $1>');
 
   // Convert newlines to <br> tags for proper display
   html = html.replace(/\r?\n/g, '<br>');
