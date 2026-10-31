@@ -329,43 +329,55 @@ document.getElementById("stat-time").addEventListener("click", () => {
   }
 })
 
+let tupper_text_indexes = []
 MD_PREVIEW_ELEM.innerHTML = discordMarkdownToHtml(WRITER_ELEM.value)
 
-function discordMarkdownToHtml(text) {
-  if (!text) return '';
 
-  // Escape HTML entities to prevent XSS attacks
-  let html = text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+function discordMarkdownToHtml(text) {
+  tupper_text_indexes = []
+  if (!text) return '';
+  let html = text.trim()
 
   //GROUP TUPPERS
   let separatedHTML = ""
   let flag = false
+  let start = 0
+  let count = 0
   for (let i = 0; i < html.length; i++){
     TUPPERS.forEach((t, ti) => {
       if (html.slice(i, i + t.prefix.length) === t.prefix)
       {
-        if (flag) separatedHTML += "</div>"
-        separatedHTML += `<p class="tupper-name">${t.name}</p><div class="tupper-text" id="tupper-text-${ti}" onclick="CopyTupperText(${ti})">\n`
+        if (flag) {
+          separatedHTML += "</div>"
+          tupper_text_indexes.push({
+            start:start,
+            end: i
+          })
+          start = i
+        }
+        separatedHTML += `<p class="tupper-name">${t.name}</p><div class="tupper-text" id="tupper-text-${ti}" onclick="CopyTupperText(${count++})">\n`
         flag = true
         i+=t.prefix.length
       }
     })
     separatedHTML += html[i]
   }
-  if (flag) separatedHTML += "</div>"
+  if (flag) {
+    separatedHTML += "</div>"
+    tupper_text_indexes.push({
+      start:start,
+      end: html.length
+    })
+  }
   html = separatedHTML.trim()
 
   html = html.replace(/\r?\n[ ]*/g, "\n")
-  console.log(html)
 
   // 1. Multiline Blockquote: >>> text (must be processed before single-line)
   html = html.replace(/\r?\n&gt;&gt;&gt; ([\s\S]*)$/g, '<div class="discord-block-quote discord-multi-quote">$1</div>');
 
   // 2. Single-line Blockquote: > text (at the start of a line)
-  html = html.replace(/\r?\n&gt; ([^\r\n]*)/g, '<span class="discord-block-quote">$1</span>');
+  html = html.replace(/\r?\n&gt; ([^\r\n]*)/g, '<br><span class="discord-block-quote">$1</span>');
 
   // 3. Headings: #, ##, ### (at the start of a line)
   html = html.replace(/(?:^|\r?\n)### ([^\r\n]*)/g, '<span class="discord-heading discord-h3">$1</span>');
@@ -512,10 +524,12 @@ function SaveTuppers() {
 }
 
 function CopyTupperText(i) {
-  let text = document.getElementById("tupper-text-" + i).innerHTML
-  text = text.replaceAll("<br>", "\n")
-  text = text.replaceAll(/<[^<>]*>/gi, "")
-  navigator.clipboard.writeText(TUPPERS[i].prefix+" "+text);
+  // let text = document.getElementById("tupper-text-" + i).innerHTML
+  // text = text.replaceAll("<br>", "\n")
+  // text = text.replaceAll(/<[^<>]*>/gi, "")
+  let text = WRITER_ELEM.value.slice(tupper_text_indexes[i].start,tupper_text_indexes[i].end)
+  navigator.clipboard.writeText(text);
+  console.log(text)
 }
 
 //load saved text
