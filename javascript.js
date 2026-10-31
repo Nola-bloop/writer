@@ -477,6 +477,18 @@ function HidePage() {
   document.getElementById("dark-bg").classList.add("hidden")
 }
 
+function HogPageToggle() {
+  let container = document.getElementById("writer-container")
+  let arrow = document.getElementById("middle-arrow")
+  if (container.classList.contains("HOG")) {
+    container.classList.remove("HOG")
+    arrow.classList.remove("flipped")
+  } else {
+    container.classList.add("HOG")
+    arrow.classList.add("flipped")
+  }
+}
+
 function AddTupper() {
   TUPPERS.push({
     prefix: "",
