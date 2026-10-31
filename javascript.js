@@ -371,13 +371,15 @@ function discordMarkdownToHtml(text) {
   }
   html = separatedHTML.trim()
 
+  console.log(html)
+
   html = html.replace(/\r?\n[ ]*/g, "\n")
 
   // 1. Multiline Blockquote: >>> text (must be processed before single-line)
-  html = html.replace(/\r?\n&gt;&gt;&gt; ([\s\S]*)$/g, '<div class="discord-block-quote discord-multi-quote">$1</div>');
+  html = html.replace(/\r?\n>>> ([^<]*)/g, '<div class="discord-block-quote discord-multi-quote">$1</div>');
 
   // 2. Single-line Blockquote: > text (at the start of a line)
-  html = html.replace(/\r?\n&gt; ([^\r\n]*)/g, '<br><span class="discord-block-quote">$1</span>');
+  html = html.replace(/\r?\n> ([^\r\n]*)/g, '<br><span class="discord-block-quote">$1</span>');
 
   // 3. Headings: #, ##, ### (at the start of a line)
   html = html.replace(/(?:^|\r?\n)### ([^\r\n]*)/g, '<span class="discord-heading discord-h3">$1</span>');
@@ -529,7 +531,6 @@ function CopyTupperText(i) {
   // text = text.replaceAll(/<[^<>]*>/gi, "")
   let text = WRITER_ELEM.value.slice(tupper_text_indexes[i].start,tupper_text_indexes[i].end)
   navigator.clipboard.writeText(text);
-  console.log(text)
 }
 
 //load saved text
